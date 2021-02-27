@@ -1,6 +1,7 @@
 const boardBorder = 'black'
 const boardBackground = 'white'
-const snakeCol = 'lightblue'
+let snakeCol = randomHexColorCode()
+let foodCol = randomHexColorCode()
 const snakeBorder = 'darkblue'
 const initialSnake = [
   { x: 192, y: 192 },
@@ -33,6 +34,11 @@ let hitLeftWall
 let hitRightWall
 let hitToptWall
 let hitBottomWall
+
+function randomHexColorCode() {
+  let number = (Math.random() * 0xfffff * 1000000).toString(16)
+  return '#' + number.slice(0, 6)
+}
 
 const snakeboard = document.getElementById('snakeboard')
 const snakeboardCtx = snakeboard.getContext('2d')
@@ -187,8 +193,8 @@ function random(min, max, limit = 16, ratio = 1) {
 }
 
 function createFood() {
-  foodX = random(0, snakeboard.width - FOOD_SIZE, 16, 16)
-  foodY = random(0, snakeboard.height - FOOD_SIZE, 16, 16)
+  foodX = random(0, snakeboard.width - FOOD_SIZE, FOOD_SIZE, FOOD_SIZE)
+  foodY = random(0, snakeboard.height - FOOD_SIZE, FOOD_SIZE, FOOD_SIZE)
   snake.forEach((part) => {
     const hasEatenFood = part.x == foodX && part.y == foodY
     if (hasEatenFood) createFood()
@@ -196,7 +202,7 @@ function createFood() {
 }
 
 function drawFood() {
-  snakeboardCtx.fillStyle = 'lightgreen'
+  snakeboardCtx.fillStyle = foodCol
   snakeboardCtx.strokestyle = 'darkgreen'
   snakeboardCtx.fillRect(foodX, foodY, FOOD_SIZE, FOOD_SIZE)
   snakeboardCtx.strokeRect(foodX, foodY, FOOD_SIZE, FOOD_SIZE)
