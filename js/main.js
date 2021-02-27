@@ -91,8 +91,8 @@ function clearCanvas() {
 
   if (hitAnyWall()) {
     hitLeftWall = hitRightWall = hitToptWall = hitBottomWall = false
-    snakeboard.width = snakeboard.width < SNAKE_SIZE ? snakeboard.width : snakeboard.width - SNAKE_SIZE
-    snakeboard.height = snakeboard.height < SNAKE_SIZE ? snakeboard.height : snakeboard.height - SNAKE_SIZE
+    snakeboard.width = snakeboard.width < 240 ? snakeboard.width : snakeboard.width - SNAKE_SIZE
+    snakeboard.height = snakeboard.height < 240 ? snakeboard.width : snakeboard.height - SNAKE_SIZE
   }
   snakeboardCtx.fillRect(0, 0, snakeboard.width, snakeboard.height)
   snakeboardCtx.strokeRect(0, 0, snakeboard.width, snakeboard.height)
