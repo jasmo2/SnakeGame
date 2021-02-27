@@ -16,9 +16,9 @@ const scoreEl = document.getElementById('score')
 let reverseDirection = false
 let highestScore = 0
 let score = 0
-let eatenFood = 0
+let specialFood = false
 
-const FRAME_RATE = 100
+const FRAME_RATE = 1000
 const SNAKE_SIZE = 16
 const FOOD_SIZE = SNAKE_SIZE
 
@@ -56,10 +56,13 @@ function restartGame() {
   snake = Array.from(initialSnake)
   snakeboard.width = 800
   snakeboard.height = 800
+  snakeCol = randomHexColorCode()
+  foodCol = randomHexColorCode()
   dx = SPEED
   dy = 0
   score = 0
   scoreEl.innerHTML = `Score: ${score}`
+
   main()
 }
 
@@ -145,8 +148,7 @@ function moveSnake(revert = false) {
   snake.unshift(head)
   const hasEatenFood = x === foodX && y === foodY
   if (hasEatenFood) {
-    score += 1
-    eatenFood += 1
+    score += specialFood ? 9 : 1
     scoreEl.innerHTML = `Score: ${score}`
     if (highestScore < score) {
       highestScore = score
@@ -188,13 +190,17 @@ function changeDirection(event) {
   }
 }
 
-function random(min, max, limit = 16, ratio = 1) {
+function random(min, max, limit = 1, ratio = 1) {
   return Math.round((Math.random() * (max - min) + min) / ratio) * limit
 }
 
 function createFood() {
   foodX = random(0, snakeboard.width - FOOD_SIZE, FOOD_SIZE, FOOD_SIZE)
   foodY = random(0, snakeboard.height - FOOD_SIZE, FOOD_SIZE, FOOD_SIZE)
+
+  const randSpecialFood = random(0, 100)
+  specialFood = 20 > randSpecialFood
+
   snake.forEach((part) => {
     const hasEatenFood = part.x == foodX && part.y == foodY
     if (hasEatenFood) createFood()
@@ -202,7 +208,7 @@ function createFood() {
 }
 
 function drawFood() {
-  snakeboardCtx.fillStyle = foodCol
+  snakeboardCtx.fillStyle = specialFood ? 'red' : foodCol
   snakeboardCtx.strokestyle = 'darkgreen'
   snakeboardCtx.fillRect(foodX, foodY, FOOD_SIZE, FOOD_SIZE)
   snakeboardCtx.strokeRect(foodX, foodY, FOOD_SIZE, FOOD_SIZE)
