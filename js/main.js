@@ -3,19 +3,19 @@ const boardBackground = 'white'
 const snakeCol = 'lightblue'
 const snakeBorder = 'darkblue'
 const initialSnake = [
-  { x: 200, y: 200 },
-  { x: 184, y: 200 },
-  { x: 168, y: 200 },
-  { x: 152, y: 200 },
-  { x: 136, y: 200 },
-  { x: 120, y: 200 },
-  { x: 104, y: 200 },
+  { x: 192, y: 192 },
+  { x: 176, y: 192 },
+  { x: 160, y: 192 },
+  { x: 144, y: 192 },
 ]
 let snake = Array.from(initialSnake)
 const playAgainBtn = document.getElementById('play-again')
+const scoreEl = document.getElementById('score')
 
 let reverseDirection = false
-let snakeHitWall = false
+let highestScore = 0
+let score = 0
+let eatenFood = 0
 
 const SNAKE_SIZE = 16
 const FOOD_SIZE = SNAKE_SIZE
@@ -40,11 +40,14 @@ document.addEventListener('keydown', changeDirection)
 
 function restartGame() {
   playAgainBtn.style = 'display: none;'
+  scoreEl.style.color = ''
   snake = Array.from(initialSnake)
   snakeboard.width = 800
   snakeboard.height = 800
   dx = SPEED
   dy = 0
+  score = 0
+  scoreEl.innerHTML = `Score: ${score}`
   main()
 }
 
@@ -89,15 +92,16 @@ function hitWall() {
     //reverse logic below
     dx = -1 * dx
     dy = -1 * dy
-    snakeHitWall = true
     snakeboard.width = snakeboard.width < 116 ? snakeboard.width : snakeboard.width - 116
     snakeboard.height = snakeboard.height < 116 ? snakeboard.height : snakeboard.height - 116
+    createFood()
   }
 }
 
 function endGame() {
   // Snake contact itself
-  for (let i = initialSnake.length; i < snake.length; i++) {
+  const l = initialSnake.length
+  for (let i = l; i < snake.length; i++) {
     if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
       playAgainBtn.style = 'display: block;'
       return true
@@ -113,7 +117,12 @@ function moveSnake() {
   const hasEatenFood = x === foodX && y === foodY
   if (hasEatenFood) {
     score += 1
-    // document.getElementById('score').innerHTML = score
+    eatenFood += 1
+    scoreEl.innerHTML = `Score: ${score}`
+    if (highestScore < score) {
+      highestScore = score
+      scoreEl.style.color = 'red'
+    }
     createFood()
   } else {
     snake.pop()
@@ -150,13 +159,13 @@ function changeDirection(event) {
   }
 }
 
-function random(min, max, limit = 10) {
-  return Math.round(Math.random() * (max - min) + min) * limit
+function random(min, max, limit = 16, ratio = 1) {
+  return Math.round((Math.random() * (max - min) + min) / ratio) * limit
 }
 
 function createFood() {
-  foodX = random(0, snakeboard.width - FOOD_SIZE)
-  foodY = random(0, snakeboard.height - FOOD_SIZE)
+  foodX = random(0, snakeboard.width - FOOD_SIZE, 16, 16)
+  foodY = random(0, snakeboard.height - FOOD_SIZE, 16, 16)
   snake.forEach((part) => {
     const hasEatenFood = part.x == foodX && part.y == foodY
     if (hasEatenFood) createFood()
