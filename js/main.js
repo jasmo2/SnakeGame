@@ -17,6 +17,7 @@ let highestScore = 0
 let score = 0
 let eatenFood = 0
 
+const FRAME_RATE = 100
 const SNAKE_SIZE = 16
 const FOOD_SIZE = SNAKE_SIZE
 
@@ -57,16 +58,18 @@ function restartGame() {
 }
 
 function main() {
-  if (endGame()) return
   reverseDirection = false
+  if (endGame()) return
+
   setTimeout(() => {
     clearCanvas()
     drawFood()
     moveSnake()
     drawSnake()
     // Call main again
+
     main()
-  }, 100)
+  }, FRAME_RATE)
 }
 
 function hitAnyWall() {
@@ -107,7 +110,7 @@ function hitWall() {
     dx = -1 * dx
     dy = -1 * dy
     createFood()
-    moveSnake()
+    moveSnake(true)
   }
 }
 
