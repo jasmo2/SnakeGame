@@ -28,6 +28,11 @@ let dy = 0
 let foodX
 let foodY
 
+let hitLeftWall
+let hitRightWall
+let hitToptWall
+let hitBottomWall
+
 const snakeboard = document.getElementById('snakeboard')
 const snakeboardCtx = snakeboard.getContext('2d')
 
@@ -64,9 +69,19 @@ function main() {
   }, 100)
 }
 
+function hitAnyWall() {
+  return hitLeftWall || hitToptWall || hitRightWall || hitBottomWall
+}
+
 function clearCanvas() {
   snakeboardCtx.fillStyle = boardBackground
   snakeboardCtx.strokestyle = boardBorder
+
+  if (hitAnyWall()) {
+    hitLeftWall = hitRightWall = hitToptWall = hitBottomWall = false
+    snakeboard.width = snakeboard.width < SNAKE_SIZE ? snakeboard.width : snakeboard.width - SNAKE_SIZE
+    snakeboard.height = snakeboard.height < SNAKE_SIZE ? snakeboard.height : snakeboard.height - SNAKE_SIZE
+  }
   snakeboardCtx.fillRect(0, 0, snakeboard.width, snakeboard.height)
   snakeboardCtx.strokeRect(0, 0, snakeboard.width, snakeboard.height)
 }
@@ -83,25 +98,27 @@ function drawSnakeItem(snakeItem) {
 }
 
 function hitWall() {
-  const hitLeftWall = snake[0].x < 0
-  const hitRightWall = snake[0].x > snakeboard.width - 2 * SNAKE_SIZE
-  const hitToptWall = snake[0].y < 0
-  const hitBottomWall = snake[0].y > snakeboard.height - SNAKE_SIZE
+  hitLeftWall = snake[0].x < 0
+  hitRightWall = snake[0].x > snakeboard.width - SNAKE_SIZE
+  hitToptWall = snake[0].y < 0
+  hitBottomWall = snake[0].y > snakeboard.height - SNAKE_SIZE
 
-  if (hitLeftWall || hitToptWall) {
-    //reverse logic below
+  if (hitAnyWall()) {
     dx = -1 * dx
     dy = -1 * dy
-    snakeboard.width = snakeboard.width < 116 ? snakeboard.width : snakeboard.width - 116
-    snakeboard.height = snakeboard.height < 116 ? snakeboard.height : snakeboard.height - 116
     createFood()
+    moveSnake()
   }
 }
 
 function endGame() {
   // Snake contact itself
+
   const l = initialSnake.length
   for (let i = l; i < snake.length; i++) {
+    if (hitAnyWall()) {
+      break
+    }
     if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
       playAgainBtn.style = 'display: block;'
       return true
@@ -110,7 +127,10 @@ function endGame() {
   hitWall()
 }
 
-function moveSnake() {
+function moveSnake(revert = false) {
+  if (revert) {
+    snake.reverse()
+  }
   const { x, y } = snake[0]
   const head = { x: dx + x, y: dy + y }
   snake.unshift(head)
