@@ -18,7 +18,7 @@ let highestScore = 0
 let score = 0
 let specialFood = false
 
-const FRAME_RATE = 1000
+const FRAME_RATE = random(1, 5, 100)
 const SNAKE_SIZE = 16
 const FOOD_SIZE = SNAKE_SIZE
 
@@ -124,8 +124,6 @@ function hitWall() {
 }
 
 function endGame() {
-  // Snake contact itself
-
   const l = initialSnake.length
   for (let i = l; i < snake.length; i++) {
     if (hitAnyWall()) {
@@ -205,6 +203,10 @@ function createFood() {
     const hasEatenFood = part.x == foodX && part.y == foodY
     if (hasEatenFood) createFood()
   })
+
+  setTimeout(() => {
+    createFood()
+  }, random(4, 10, 1000))
 }
 
 function drawFood() {
