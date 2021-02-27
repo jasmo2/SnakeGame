@@ -1,0 +1,10 @@
+body {
+  display: flex;
+}
+#play-again {
+  display: none;
+  border-radius: 5px;
+  height: 50px;
+  margin-left: 10px;
+  width: 150px;
+}

@@ -10,15 +10,26 @@ let snake = [
   { x: 170, y: 200 },
   { x: 160, y: 200 },
 ]
+// Speed
+const SPEED = 10
+
+let dx = SPEED
+let dy = 0
 
 const snakeboard = document.getElementById('snakeboard')
 const snakeboardCtx = snakeboard.getContext('2d')
+document.addEventListener('keydown', changeDirection)
 // Start game
 main()
 
 function main() {
-  clearCanvas()
-  drawSnake()
+  setTimeout(() => {
+    clearCanvas()
+    moveSnake()
+    drawSnake()
+    // Call main again
+    main()
+  }, 100)
 }
 
 function clearCanvas() {
@@ -29,12 +40,19 @@ function clearCanvas() {
 }
 
 function drawSnake() {
-  snake.forEach(drawSnakePart)
+  snake.forEach(drawSnakeItem)
 }
 
-function drawSnakePart(snakePart) {
+function drawSnakeItem(snakeItem) {
   snakeboardCtx.fillStyle = snakeCol
   snakeboardCtx.strokestyle = snakeBorder
-  snakeboardCtx.fillRect(snakePart.x, snakePart.y, 10, 10)
-  snakeboardCtx.strokeRect(snakePart.x, snakePart.y, 10, 10)
+  snakeboardCtx.fillRect(snakeItem.x, snakeItem.y, 10, 10)
+  snakeboardCtx.strokeRect(snakeItem.x, snakeItem.y, 10, 10)
+}
+
+function moveSnake() {
+  const head = { x: snake[0].x + dx, y: snake[0].y }
+  snake.unshift(head)
+  snake.pop()
+}
 }
